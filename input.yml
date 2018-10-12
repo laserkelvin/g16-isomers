@@ -1,0 +1,5 @@
+method: M05
+basis: 6-31G*
+charge: 0
+multiplicities: [1, 3]
+ts: false
