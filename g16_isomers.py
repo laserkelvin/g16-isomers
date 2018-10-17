@@ -71,16 +71,26 @@ def input_builder(template, coords, params, comment):
             opt = "Opt=VeryTight"
         # Package parameters together
         filename = comment + "-" + str(multiplicity) + ".com"
+        name = filename.replace(".com", "")
         params.update({
             "multi": str(multiplicity),
             "comment": comment,
             "coords": coords,
             "opt": opt,
-            "name": filename.replace(".com", "")
+            "name": name
             })
         # Write the input file to disk
         with open("calcs/" + filename, "w+") as write_file:
             write_file.write(template.format_map(params))
+        with open("g16.sh") as read_file:
+            pbs_template = read_file.read()
+        with open("calcs/g16.sh", "w+") as write_file:
+            write_file.write(
+                pbs_template.format_map({"name": name})
+                )
+        os.chdir("calcs")
+        os.system("qsub g16.sh")
+        os.chdir("..")
 
 
 if __name__ == "__main__":
