@@ -1,7 +1,9 @@
 
+from glob import glob
+
 import numpy as np
 import pandas as pd
-from glob import glob
+
 
 def parse_log(filepath):
     """ Function for parsing a G16 logfile.
@@ -39,9 +41,9 @@ def parse_log(filepath):
     return data
 
 
-def main():
+def main(directory="calcs"):
     conversion = 219474.6 / 83.59
-    logfiles = glob("calcs/*.log")
+    logfiles = glob(os.path.join(directory, "*.log"))
     data = [parse_log(file) for file in logfiles]
     df = pd.DataFrame(data)
     df["E"] = df["E+ZPE"] - df["ZPE"]
