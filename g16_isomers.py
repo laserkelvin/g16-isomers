@@ -5,6 +5,7 @@ import os
 from glob import glob
 import peakutils
 import yaml
+from periodictable import elements
 
 
 def main():
@@ -38,19 +39,18 @@ def main():
 
     for file in xyzfiles:
         natoms, comment, coords = read_xyz(file)
-        # Automatically make doublets based on the number
-        # of hydrogens - usually even number of hydrogens is
-        # closed-shell.
-        hcount = len([line[0] for line in coords if line[0] == "H"])
-        if hcount % 2 != 0:
+        nelec = read_elements(coords)
+        # Automatically make doublets based on odd
+        # number of electrons
+        if nelec % 2 != 0:
             calc_params["multiplicities"] = [2]
-        elif hcount % 2 == 0:
+        elif nelec % 2 == 0:
             calc_params["multiplicities"] = [1]
-        input_builder(
-            template,
-            coords,
-            calc_params,
-            comment)
+            input_builder(
+                template,
+                coords,
+                calc_params,
+                comment)
 
 
 def read_xyz(filepath):
@@ -67,6 +67,20 @@ def read_xyz(filepath):
         return natoms, comment, coordinates
 
 
+def read_elements(coordinates):
+    """
+        Function to parse out the chemical formula from a list
+        of xyz coordinates.
+    """
+    nelectrons = 0
+    for line in coordinates:
+        element = line.split()[0]
+        ele_obj = elements.__dict__[element]
+        nelectrons += ele_obj.number
+    return nelectrons
+
+
+
 def input_builder(template, coords, params, comment):
     """ Function for building a Gaussian input file.
         Takes a template input file, 
@@ -75,9 +89,9 @@ def input_builder(template, coords, params, comment):
     for multiplicity in params["multiplicities"]:
         # Flatten the coordinates into space delimited
         if params["ts"]:
-            opt = "Opt=(VeryTight,CalcAll,TS,MaxCycles=100)"
+            opt = "Opt=(VeryTight,CalcAll,TS,MaxCycles=300)"
         else:
-            opt = "Opt=(MaxCycles=100,VeryTight)"
+            opt = "Opt=(MaxCycles=300,VeryTight)"
         # Package parameters together
         filename = comment + "-" + str(multiplicity) + ".com"
         name = filename.replace(".com", "")

@@ -14,10 +14,12 @@ def main():
     molecules = [parse_g16(file) for file in tqdm(glob("calcs/*.log"))]
     for molecule in molecules:
         data.append(
-            {key: value for key, value in molecule.__dict__ if key in ignore}
+            {key: value for key, value in molecule.__dict__.items() if key not in ignore}
             )
     mol_df = pd.DataFrame(data)
     mol_df.to_pickle("mol_dataframe.pkl")
+    success_df = mol_df.loc[mol_df["success"] == True]
+    success_df.to_pickle("mol_dataframe-success.pkl")
     save_obj(molecules, "molecules.pkl")
 
 

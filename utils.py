@@ -23,6 +23,7 @@ from itertools import product
 import h5py
 import yaml
 import joblib
+import periodictable
 
 
 def generate_folder():
@@ -203,6 +204,7 @@ class Molecule:
     u_A: float = 0.0
     u_B: float = 0.0
     u_C: float = 0.0
+    formula: str = ""
     smi: str = ""
     point_group: str = "C1"
     method: str = ""
@@ -224,6 +226,8 @@ class Molecule:
     Etot: float = 0.0
     harm_freq: str = ""
     harm_int: str = ""
+    opt_delta: float = 0.0
+    filename: str = ""
 
 
 def parse_g16(filepath):
@@ -234,6 +238,7 @@ def parse_g16(filepath):
     data = dict()
     harm_freq = list()
     harm_int = list()
+    filename = filepath.split("/")[-1].split(".")[0]
     with open(filepath) as read_file:
         lines = read_file.readlines()
         for index, line in enumerate(lines):
@@ -323,6 +328,19 @@ def parse_g16(filepath):
                 inten = line.split()[3:]
                 inten = [float(value) for value in inten]
                 harm_int.extend(inten)
+            if "Predicted change in Energy=" in line:
+                data["opt_delta"] = float(line.replace("D", "E").split("=")[-1])
+    if "coords" in data:
+        atom_dict = dict()
+        for coord in data["coords"]:
+            element = periodictable.elements[coord[0]]
+            if element not in atom_dict:
+                atom_dict[element] = 1
+            else:
+                atom_dict[element] += 1
+        molecule_string = "".join(["{}{}".format(key, value) for key, value in atom_dict.items()])
+        data["formula"] = molecule_string
+    data["filename"] = filename
     data["harm_freq"] = harm_freq
     data["harm_int"] = harm_int
     result_obj = Molecule(**data)
