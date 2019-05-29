@@ -1,0 +1,10 @@
+Name: {name}
+Rotational constants: 
+{A} MHz, {B} MHz, {C} MHz
+
+Dipole moments: 
+{u_A} D, {u_B} D, {u_C} D
+
+Asymmetry parameter:
+{kappa}
+
