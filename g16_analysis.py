@@ -22,7 +22,7 @@ def main():
     success_df.to_pickle("mol_dataframe-success.pkl")
     save_obj(molecules, "molecules.pkl")
 
-    with open("results.txt", "r") as read_file:
+    with open("result_template.txt", "r") as read_file:
         template = read_file.read()
 
     for molecule in molecules:
