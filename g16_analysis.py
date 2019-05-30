@@ -25,8 +25,9 @@ def main():
     with open("result_template.txt", "r") as read_file:
         template = read_file.read()
 
-    for molecule in molecules:
-        print(template.format(**molecule.__dict__))
+    with open("result_summary.txt", "w+") as write_file:
+        for molecule in molecules:
+            write_file.write(template.format(**molecule.__dict__))
 
 if __name__ == "__main__":
     main()
