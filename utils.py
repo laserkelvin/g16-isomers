@@ -264,11 +264,11 @@ def parse_g16(filepath):
                 calc = line.split()[1].split("/")
                 try:
                     method, basis = calc
+                data["basis"] = basis
                 except ValueError:
                     # This is for composite schemes
                     method = calc
                 data["method"] = method
-                data["basis"] = basis
             if "Multiplicity" in line:
                 split_line = line.split()
                 data["charge"] = int(split_line[2])
