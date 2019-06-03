@@ -264,7 +264,7 @@ def parse_g16(filepath):
                 calc = line.split()[1].split("/")
                 try:
                     method, basis = calc
-                data["basis"] = basis
+                    data["basis"] = basis
                 except ValueError:
                     # This is for composite schemes
                     method = calc
