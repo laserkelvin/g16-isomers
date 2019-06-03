@@ -262,7 +262,11 @@ def parse_g16(filepath):
                 data["success"] = True
             if line.startswith(" # "):
                 calc = line.split()[1].split("/")
-                method, basis = calc
+                try:
+                    method, basis = calc
+                except ValueError:
+                    # This is for composite schemes
+                    method = calc
                 data["method"] = method
                 data["basis"] = basis
             if "Multiplicity" in line:
