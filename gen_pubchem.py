@@ -13,7 +13,7 @@ def query_pubchem(formula, max_count=100):
     df = pubchempy.get_compounds(
             formula,
             "formula",
-            listkey_count=max_count
+            listkey_count=max_count,
             as_dataframe=True
             )
     return df
