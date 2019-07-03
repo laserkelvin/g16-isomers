@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+
+import os
+from glob import glob
 
 import numpy as np
 import pandas as pd
-import os
-from glob import glob
 import peakutils
 import yaml
 from periodictable import elements
