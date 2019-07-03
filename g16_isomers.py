@@ -39,8 +39,10 @@ def main():
     if os.path.isdir("calcs") is False:
         os.mkdir("calcs")
 
-    for file in xyzfiles:
+    for index, file in enumerate(xyzfiles):
         natoms, comment, coords = read_xyz(file)
+        if len(comment) == 0:
+            comment = f"Structure{index:04d}"
         nelec = read_elements(coords)
         # Automatically make doublets based on odd
         # number of electrons
