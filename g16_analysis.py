@@ -18,6 +18,11 @@ def main():
             {key: value for key, value in molecule.__dict__.items() if key not in ignore}
             )
     mol_df = pd.DataFrame(data)
+    mol_df.sort_values(["Etot"], ascending=True, inplace=True)
+    indexes = mol_df.index
+    # Resort the molecule list with ascending order energy
+    molecules = [molecules[index] for index in indexes]
+    mol_df.loc[:, "relative"] = (mol_df["Etot"] - mol_df["Etot"].min()) * (219474.3 / 83.59)
     mol_df.to_pickle("mol_dataframe.pkl")
     success_df = mol_df.loc[mol_df["success"] == True]
     success_df.to_pickle("mol_dataframe-success.pkl")
@@ -27,7 +32,8 @@ def main():
         template = read_file.read()
 
     with open("result_summary.txt", "w+") as write_file:
-        for molecule in molecules:
+        for index, molecule in enumerate(molecules):
+            molecule.rel_energy = mol_df.iloc[index]["relative"]
             write_file.write(template.format(**molecule.__dict__))
 
 if __name__ == "__main__":

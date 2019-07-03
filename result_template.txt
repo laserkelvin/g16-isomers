@@ -1,12 +1,15 @@
 Name: {filename}
 Rotational constants: 
-{A} MHz, {B} MHz, {C} MHz
+{A:.6f} MHz, {B:.6f} MHz, {C:.6f} MHz
 
 Dipole moments: 
-{u_A} D, {u_B} D, {u_C} D
+{u_A:.2f} D, {u_B:.2f} D, {u_C:.2f} D
 
 Asymmetry parameter:
-{kappa}
+{kappa:.2f}
+
+Relative energy (kJ/mol):
+{rel_energy:.2f}
 
 -------------------------
 
