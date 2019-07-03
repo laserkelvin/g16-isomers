@@ -1,0 +1,10 @@
+H:
+    n_min: 2
+    n_max: 6
+    step: 2
+O:
+    n_min: 1
+    n_max: 1
+C:
+    n_min: 3
+    n_max: 8
