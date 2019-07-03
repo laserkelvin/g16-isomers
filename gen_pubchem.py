@@ -32,7 +32,7 @@ def df2xyz(pubchem_df):
 
 @click.command()
 @click.argument("formula")
-@click.option("max_count", default=100, help="Maximum number of queries to return.")
+@click.option("--max_count", default=100, help="Maximum number of queries to return.")
 def main(formula, max_count=100):
     df = query_pubchem(formula, max_count)
     df.to_csv("pubchem_query.csv")
