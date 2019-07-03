@@ -21,7 +21,7 @@ def query_pubchem(formula, max_count=100):
 
 def df2xyz(pubchem_df):
     # Write smiles to file
-    smi = pubchem_df.'canonical_smiles'.values
+    smi = pubchem_df["canonical_smiles"].values
     with open("molecules.smi", "w+") as write_file:
         for value in smi:
             write_file.write(value + "\n")
