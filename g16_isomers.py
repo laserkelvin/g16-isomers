@@ -32,7 +32,7 @@ def main():
 
     print("----------------------")
 
-    xyzfiles = glob("*.xyz")
+    xyzfiles = glob("structures/*.xyz")
     print("Found the following .xyz")
     print(xyzfiles)
 
