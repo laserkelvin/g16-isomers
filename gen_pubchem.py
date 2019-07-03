@@ -25,7 +25,8 @@ def df2xyz(pubchem_df):
     with open("molecules.smi", "w+") as write_file:
         for value in smi:
             write_file.write(value + "\n")
-    os.mkdir("structures")
+    if os.path.isdir("structures") is False:
+        os.mkdir("structures")
     utils.smi2xyz("molecules.smi")
 
 

@@ -169,17 +169,14 @@ def check_calc(method, basis):
     
 
 def smi2xyz(smi_file):
-    bab_cmd = ["obgen", smi_file, "-ff UFF"]
     # Generate structures and optimize with UFF into a big SDF file
+    bab_cmd = f"obgen {smi_file} -ff UFF"
     with open("structures/full.sdf", "w+") as write_file:
-        babel_proc = Popen(bab_cmd, stdout=write_file)
+        babel_proc = Popen(bab_cmd, shell=True, stdout=write_file)
         babel_proc.wait()
     os.chdir("structures")
-    #opt_cmd = ["obabel", form_str, "-oxyz", "--gen3d", "--conformer", "--nconf 50", "--score energy"]
-    convert_cmd = ["obabel", "-isdf", "full.sdf", "-O", "geom.xyz", "-m"]
-    #opt_cmd = ["obminimize", "-o", "xyz", "-ff", "UFF", "structures/{}.xyz".format(index)]
-    #with open("structures/{}_opt.xyz".format(index), "w+") as write_file:
-    babel_proc = Popen(convert_cmd)
+    convert_cmd = "obabel -isdf full.sdf -O geom.xyz -m"
+    babel_proc = Popen(convert_cmd, shell=True, stdout=PIPE)
     babel_proc.wait()
     os.chdir("..")
 
