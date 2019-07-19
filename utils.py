@@ -17,7 +17,7 @@ import re
 from dataclasses import dataclass
 
 import numpy as np
-from subprocess import Popen, PIPE
+from subprocess import Popen, run, PIPE
 from glob import glob
 from itertools import product
 import h5py
@@ -170,9 +170,9 @@ def check_calc(method, basis):
 
 def smi2xyz(smi_file):
     # Generate structures and optimize with UFF into a big SDF file
-    bab_cmd = f"obgen {smi_file} -ff UFF"
+    bab_cmd = f"obgen {smi_file} -ff UFF -n 200"
     with open("structures/full.sdf", "w+") as write_file:
-        babel_proc = Popen(bab_cmd, shell=True, stdout=write_file)
+        babel_proc = run(bab_cmd, shell=True, stdout=write_file)
         babel_proc.wait()
     os.chdir("structures")
     convert_cmd = "obabel -isdf full.sdf -O geom.xyz -m"
@@ -225,6 +225,16 @@ class Molecule:
     harm_int: str = ""
     opt_delta: float = 0.0
     filename: str = ""
+
+    def __eq__(self, other, thres=1e-3):
+        check = all(
+            [
+                np.abs(self.A - other.A) <= thres,
+                np.abs(self.B - other.B) <= thres,
+                np.abs(self.C - other.C) <= thres
+                ]
+            )
+        return check
 
 
 def parse_g16(filepath):

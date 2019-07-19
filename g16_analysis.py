@@ -12,7 +12,11 @@ from utils import parse_g16, save_obj
 def main():
     data = list()
     ignore = ["coords", "harm_freq", "harm_int"]
-    molecules = [parse_g16(file) for file in tqdm(glob("calcs/*.log"))]
+    molecules = list()
+    for file in tqdm(glob("calcs/*.log")):
+        molecule = parse_g16(file)
+        if molecule not in molecules:
+            molecules.append(molecule)
     for molecule in molecules:
         data.append(
             {key: value for key, value in molecule.__dict__.items() if key not in ignore}
