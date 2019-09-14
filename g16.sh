@@ -1,8 +1,8 @@
 #/bin/bash
 # ----------- Parameters --------- #
 #$ -S /bin/bash
-#$ -l mres=5G,h_data=5G,h_vmem=5G
-#$ -q lThC.q@compute-10-*
+#$ -l mres=16G,h_data=5G,h_vmem=5G
+#$ -q lThC.q@@avx-hosts
 #$ -pe mthread 4
 #$ -cwd
 #$ -j y
