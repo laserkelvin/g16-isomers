@@ -18,8 +18,9 @@ def main():
     calc_path = Path("calcs")
     if calc_path.exists() is False:
         raise Exception("No calculation folder!")
-    for file in tqdm(calc_path.rglob("*.log")):
-        molecule = parse_g16(file)
+    logfiles = list(calc_path.rglob("*.log"))
+    for logfile in tqdm(logfiles):
+        molecule = parse_g16(logfile)
         if molecule not in molecules:
             molecules.append(molecule)
     for molecule in molecules:
@@ -46,8 +47,8 @@ def main():
             write_file.write(template.format(**molecule.__dict__))
     
     with tarfile.open("compressed_calcs.tar.gz", "w:gz") as tar_file:
-        for file in calc_path.rglob("*.log"):
-            tar_file.add(file)
+        for logfile in calc_path.rglob("*.log"):
+            tar_file.add(logfile)
         tar_file.close()
 
 if __name__ == "__main__":
