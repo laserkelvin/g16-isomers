@@ -245,7 +245,7 @@ def parse_g16(filepath):
     data = dict()
     harm_freq = list()
     harm_int = list()
-    filename = filepath.split("/")[-1].split(".")[0]
+    filename = filepath.stem
     with open(filepath) as read_file:
         lines = read_file.readlines()
         for index, line in enumerate(lines):
