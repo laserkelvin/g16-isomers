@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from glob import glob
+from pathlib import Path
+import tarfile
 import os
 
 import pandas as pd
@@ -11,9 +13,12 @@ from utils import parse_g16, save_obj
 
 def main():
     data = list()
-    ignore = ["coords", "harm_freq", "harm_int"]
+    ignore = ["harm_freq", "harm_int"]
     molecules = list()
-    for file in tqdm(glob("calcs/*.log")):
+    calc_path = Path("calcs")
+    if calc_path.exists() is False:
+        raise Exception("No calculation folder!")
+    for file in tqdm(calc_path.rglob("*.log")):
         molecule = parse_g16(file)
         if molecule not in molecules:
             molecules.append(molecule)
@@ -39,6 +44,11 @@ def main():
         for index, molecule in enumerate(molecules):
             molecule.rel_energy = mol_df.iloc[index]["relative"]
             write_file.write(template.format(**molecule.__dict__))
+    
+    with tarfile.open("compressed_calcs.tar.gz", "w:gz") as tar_file:
+        for file in calc_path.rglob("*.log"):
+            tar_file.add(file)
+        tar_file.close()
 
 if __name__ == "__main__":
     main()

@@ -11,5 +11,7 @@ Asymmetry parameter:
 Relative energy (kJ/mol):
 {rel_energy:.2f}
 
+Coordinates:
+{coords}
 -------------------------
 
