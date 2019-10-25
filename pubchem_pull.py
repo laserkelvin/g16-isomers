@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from itertools import product
+from concurrent.futures import ProcessPoolExecutor
 
 import click
 import pandas as pd
@@ -49,7 +50,10 @@ def generate_formulas(chem_dict, filepath="formulas.txt"):
 @click.option(
     "-s", "--skip-formula", "skip", default=False, help="Skip formulae generation."
 )
-def main(yml_path, filepath, skip):
+@click.option(
+    "-n", "--nprocess", "nprocess", default=4, help="Number of concurrent processes."
+)
+def main(yml_path, filepath, skip, nprocess):
     if not skip:
         chem_dict = utils.read_yaml(yml_path)
         print("Generating combinations.")
@@ -58,10 +62,14 @@ def main(yml_path, filepath, skip):
         with open(filepath) as read_file:
             combinations = read_file.readlines()
         combinations = [combo.replace("\n", "") for combo in combinations]
-    full_batch = list()
-    for combination in combinations:
-        print(f"Querying {combination}")
-        full_batch.append(gen_pubchem.exhaust_query("".join(combination)))
+    # Run a pool of processes to speed up the querying
+    with ProcessPoolExecutor(max_workers=nprocess) as pool:
+        full_batch = list(
+            pool.map(
+                gen_pubchem.exhaust_query, ["".join(combo) for combo in combination]
+            )
+        )
+    # Combine all the results
     full_df = pd.concat(full_batch)
     full_df.to_csv("full_pull.csv")
     print("Generating XYZ files.")
