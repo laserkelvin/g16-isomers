@@ -43,10 +43,16 @@ def generate_formulas(chem_dict, filepath="formulas.txt"):
 @click.command()
 @click.argument("yml_path")
 @click.option("--filepath", default="formulas.txt", help="File to save the formulas to.")
-def main(yml_path, filepath):
-    chem_dict = utils.read_yaml(yml_path)
-    print("Generating combinations.")
-    combinations = generate_formulas(chem_dict, filepath)
+@click.option("-s", "--skip-formula", "skip", default=False, help="Skip formulae generation.")
+def main(yml_path, filepath, skip):
+    if not skip:
+        chem_dict = utils.read_yaml(yml_path)
+        print("Generating combinations.")
+        combinations = generate_formulas(chem_dict, filepath)
+    else:
+        with open(filepath) as read_file:
+            combinations = read_file.readlines()
+        combinations = [combo.replace("\n", "") for combo in combinations]
     full_batch = list()
     for combination in combinations:
         print(f"Querying {combination}")
