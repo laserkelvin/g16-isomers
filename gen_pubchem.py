@@ -13,11 +13,8 @@ import utils
 def query_pubchem(formula, max_count=100):
     try:
         df = pubchempy.get_compounds(
-                formula,
-                "formula",
-                listkey_count=max_count,
-                as_dataframe=True
-                )
+            formula, "formula", listkey_count=max_count, as_dataframe=True
+        )
         return df
     except:
         print(f"{formula} failed to query!")
@@ -42,7 +39,7 @@ def exhaust_query(formula, max_count=100):
         # Combine the dataframes together
         full_df = pd.concat(batch)
         return full_df
-    
+
 
 def df2xyz(pubchem_df):
     """
@@ -55,9 +52,7 @@ def df2xyz(pubchem_df):
     canonical smiles.
     """
     # Write smiles to file
-    subset = pubchem_df.loc[
-        ~pubchem_df["iupac_name"].str.contains("deut")
-        ]
+    subset = pubchem_df.loc[~pubchem_df["iupac_name"].str.contains("deut")]
     # Get only unique smiles entries, so we don't do
     # redundant calculations
     smi = subset["isomeric_smiles"].unique()
@@ -80,4 +75,3 @@ def main(formula, max_count=100):
 
 if __name__ == "__main__":
     main()
-

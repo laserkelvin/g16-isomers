@@ -17,8 +17,9 @@ def generate_stochiometry(atom, n_min=2, n_max=8, step=1):
     """
     if n_min != n_max:
         combinations = [
-                f"{atom}{index}" if index != 1 else f"{atom}" for index in range(n_min, n_max + 1, step)
-                ]
+            f"{atom}{index}" if index != 1 else f"{atom}"
+            for index in range(n_min, n_max + 1, step)
+        ]
     else:
         # In the instance we're locking the number of atoms
         if n_min == 1:
@@ -30,11 +31,11 @@ def generate_stochiometry(atom, n_min=2, n_max=8, step=1):
 
 def generate_formulas(chem_dict, filepath="formulas.txt"):
     atom_numbers = [
-            generate_stochiometry(key, **value) for key, value in chem_dict.items()
-            ]
+        generate_stochiometry(key, **value) for key, value in chem_dict.items()
+    ]
     combinations = list()
     with open(filepath, "w+") as write_file:
-        for combination in product(*atom_numbers): 
+        for combination in product(*atom_numbers):
             write_file.write("".join(combination) + "\n")
             combinations.append(combination)
     return combinations
@@ -42,8 +43,12 @@ def generate_formulas(chem_dict, filepath="formulas.txt"):
 
 @click.command()
 @click.argument("yml_path")
-@click.option("--filepath", default="formulas.txt", help="File to save the formulas to.")
-@click.option("-s", "--skip-formula", "skip", default=False, help="Skip formulae generation.")
+@click.option(
+    "--filepath", default="formulas.txt", help="File to save the formulas to."
+)
+@click.option(
+    "-s", "--skip-formula", "skip", default=False, help="Skip formulae generation."
+)
 def main(yml_path, filepath, skip):
     if not skip:
         chem_dict = utils.read_yaml(yml_path)
@@ -56,14 +61,12 @@ def main(yml_path, filepath, skip):
     full_batch = list()
     for combination in combinations:
         print(f"Querying {combination}")
-        full_batch.append(
-                gen_pubchem.exhaust_query("".join(combination))
-                )
+        full_batch.append(gen_pubchem.exhaust_query("".join(combination)))
     full_df = pd.concat(full_batch)
     full_df.to_csv("full_pull.csv")
     print("Generating XYZ files.")
     gen_pubchem.df2xyz(full_df)
 
+
 if __name__ == "__main__":
     main()
-

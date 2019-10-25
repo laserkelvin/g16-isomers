@@ -50,11 +50,7 @@ def main():
             calc_params["multiplicities"] = [2]
         elif nelec % 2 == 0:
             calc_params["multiplicities"] = [1]
-            input_builder(
-                template,
-                coords,
-                calc_params,
-                comment)
+        input_builder(template, coords, calc_params, comment)
 
 
 def read_xyz(filepath):
@@ -84,7 +80,6 @@ def read_elements(coordinates):
     return nelectrons
 
 
-
 def input_builder(template, coords, params, comment):
     """ Function for building a Gaussian input file.
         Takes a template input file, 
@@ -99,22 +94,22 @@ def input_builder(template, coords, params, comment):
         # Package parameters together
         filename = comment + "-" + str(multiplicity) + ".com"
         name = filename.replace(".com", "")
-        params.update({
-            "multi": str(multiplicity),
-            "comment": comment,
-            "coords": coords,
-            "opt": opt,
-            "name": name
-            })
+        params.update(
+            {
+                "multi": str(multiplicity),
+                "comment": comment,
+                "coords": coords,
+                "opt": opt,
+                "name": name,
+            }
+        )
         # Write the input file to disk
         with open("calcs/" + filename, "w+") as write_file:
             write_file.write(template.format_map(params))
         with open("g16.sh") as read_file:
             pbs_template = read_file.read()
         with open("calcs/g16.sh", "w+") as write_file:
-            write_file.write(
-                pbs_template.format_map({"name": name})
-                )
+            write_file.write(pbs_template.format_map({"name": name}))
         os.chdir("calcs")
         os.system("qsub g16.sh")
         os.chdir("..")

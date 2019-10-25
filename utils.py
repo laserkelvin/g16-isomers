@@ -1,4 +1,3 @@
-
 """
     Contains all of the auxillary functions for CFOURviewer; i.e. file I/O,
     storage to HDF5, copying and pasting, etc.
@@ -49,6 +48,7 @@ def read_settings():
     location = os.path.expanduser("~") + "/.cfourviewer/settings.yml"
     return read_yaml(location)
 
+
 """
     File I/O
 
@@ -61,6 +61,7 @@ def read_settings():
     Each calculation is then stored as datasets within this group, and the
     parsed results of the calculation.
 """
+
 
 def write_yaml(yaml_path, contents):
     # Function for writing dictionary to YAML file
@@ -77,10 +78,7 @@ def read_yaml(yaml_path):
 def xyz2smi(filepath):
     # Calls external obabel executable to convert an input xyz file
     # Returns a SMILES string for identification
-    proc = Popen(
-        ["obabel", "-ixyz", filepath, "-osmi"],
-        stdout=PIPE
-    )
+    proc = Popen(["obabel", "-ixyz", filepath, "-osmi"], stdout=PIPE)
     output = proc.communicate()[0].decode()
     smi = output.split("\t")[0]
     return smi
@@ -109,11 +107,7 @@ def read_xyz(filepath):
         natoms = int(natoms_re.findall(contents)[0])
         coords = coords_re.findall(contents)
         coords = [coord.split() for coord in coords]
-    mol_dict = {
-            "natoms": natoms,
-            "comment": "",
-            "coords": coords
-            }
+    mol_dict = {"natoms": natoms, "comment": "", "coords": coords}
     return mol_dict
 
 
@@ -131,6 +125,7 @@ def xyz2str(xyz_list):
 """
     Miscellaneous functions
 """
+
 
 def combine_method_basis(methods, bases):
     """ Function to return an iterator over all possible
@@ -166,7 +161,7 @@ def check_calc(method, basis):
                 return True
             else:
                 return False
-    
+
 
 def smi2xyz(smi_file):
     # Generate structures and optimize with UFF into a big SDF file
@@ -185,9 +180,7 @@ def save_obj(obj, filepath, **kwargs):
     """
     Save an object to disk.
     """
-    settings = {
-        "compress": ("gzip", 9)
-    }
+    settings = {"compress": ("gzip", 9)}
     settings.update(kwargs)
     joblib.dump(obj, filepath, **kwargs)
 
@@ -231,9 +224,9 @@ class Molecule:
             [
                 np.abs(self.A - other.A) <= thres,
                 np.abs(self.B - other.B) <= thres,
-                np.abs(self.C - other.C) <= thres
-                ]
-            )
+                np.abs(self.C - other.C) <= thres,
+            ]
+        )
         return check
 
 
@@ -282,7 +275,7 @@ def parse_g16(filepath):
                 data["multi"] = int(split_line[-1])
             if "Vibro-Rot alpha Matrix" in line:
                 alpha_flag = True
-                alpha_lines = lines[index + 3:]
+                alpha_lines = lines[index + 3 :]
                 alpha_mat = list()
                 alpha_index = 0
                 while alpha_flag is True:
@@ -313,7 +306,7 @@ def parse_g16(filepath):
                 data["Icc"] = float(split_line[-1])
                 data["defect"] = data["Icc"] - data["Iaa"] - data["Ibb"]
             if "Principal axis orientation" in line:
-                coord_lines = lines[index + 5:]
+                coord_lines = lines[index + 5 :]
                 coord_flag = True
                 coord_mat = list()
                 coord_index = 0
@@ -349,11 +342,12 @@ def parse_g16(filepath):
                 atom_dict[element] = 1
             else:
                 atom_dict[element] += 1
-        molecule_string = "".join(["{}{}".format(key, value) for key, value in atom_dict.items()])
+        molecule_string = "".join(
+            ["{}{}".format(key, value) for key, value in atom_dict.items()]
+        )
         data["formula"] = molecule_string
     data["filename"] = filename
     data["harm_freq"] = harm_freq
     data["harm_int"] = harm_int
     result_obj = Molecule(**data)
     return result_obj
-
