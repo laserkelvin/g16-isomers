@@ -66,7 +66,7 @@ def main(yml_path, filepath, skip, nprocess):
     with ProcessPoolExecutor(max_workers=nprocess) as pool:
         full_batch = list(
             pool.map(
-                gen_pubchem.exhaust_query, ["".join(combo) for combo in combination]
+                gen_pubchem.exhaust_query, ["".join(combo) for combo in combinations]
             )
         )
     # Combine all the results
