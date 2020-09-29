@@ -52,7 +52,9 @@ def df2xyz(pubchem_df):
     canonical smiles.
     """
     # Write smiles to file
-    subset = pubchem_df.loc[~pubchem_df["iupac_name"].str.contains("deut")]
+    subset = pubchem_df.loc[
+        ~pubchem_df["iupac_name"].str.contains("deut").astype(bool)
+        ]
     # Get only unique smiles entries, so we don't do
     # redundant calculations
     smi = subset["isomeric_smiles"].unique()

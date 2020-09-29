@@ -42,7 +42,7 @@ def main():
     for index, file in enumerate(xyzfiles):
         natoms, comment, coords = read_xyz(file)
         if len(comment) == 0:
-            comment = f"Structure{index:04d}"
+            comment = f"Structure{index:05d}"
         nelec = read_elements(coords)
         # Automatically make doublets based on odd
         # number of electrons
@@ -104,15 +104,16 @@ def input_builder(template, coords, params, comment):
             }
         )
         # Write the input file to disk
-        with open("calcs/" + filename, "w+") as write_file:
-            write_file.write(template.format_map(params))
-        with open("g16.sh") as read_file:
-            pbs_template = read_file.read()
-        with open("calcs/g16.sh", "w+") as write_file:
-            write_file.write(pbs_template.format_map({"name": name}))
-        os.chdir("calcs")
-        os.system("qsub g16.sh")
-        os.chdir("..")
+        if os.path.exists(f"calcs/{filename}") is False:
+            with open("calcs/" + filename, "w+") as write_file:
+                write_file.write(template.format_map(params))
+            with open("g16.sh") as read_file:
+                pbs_template = read_file.read()
+            with open("calcs/g16.sh", "w+") as write_file:
+                write_file.write(pbs_template.format_map({"name": name}))
+            os.chdir("calcs")
+            os.system("qsub g16.sh")
+            os.chdir("..")
 
 
 if __name__ == "__main__":

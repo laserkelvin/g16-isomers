@@ -2,7 +2,7 @@
 # ----------- Parameters --------- #
 #$ -S /bin/bash
 #$ -l mres=16G,h_data=5G,h_vmem=5G
-#$ -q lThC.q@@avx-hosts
+#$ -q lThC.q@compute-[69][34]-*
 #$ -pe mthread 4
 #$ -cwd
 #$ -j y
@@ -26,5 +26,5 @@ mkdir $scrdir
 
 echo `date` job $JOB_NAME started in $QUEUE with jobID=$JOB_ID on $HOSTNAME
 
-g16 < {name}.com > {name}.log
+g16 -c=$NSLOTS < {name}.com > {name}.log
 
